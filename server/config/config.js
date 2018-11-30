@@ -19,7 +19,7 @@ process.env.SEED_LOGIN = process.env.SEED_LOGIN || 'este-es-el-seed-desarrollo';
 //Database
 let urlDB;
 if (process.env.NODE_ENV === 'dev'){
-    urlDB = 'mongodb://localhost:27017/cafe';
+    urlDB = 'mongodb://localhost:27017/ProyectoIS';
 } else {
     urlDB = process.env.MONGO_URI;
  }

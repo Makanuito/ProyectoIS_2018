@@ -7,13 +7,13 @@ const {verificaToken,verificaAdmin_Role} = require('../middlewares/autenticacion
 const bcrypt = require('bcryptjs');
 const _= require('underscore');
 
-app.get('/usuario',verificaToken,(req, res) => {
+app.get('/usuario',verificaToken,(req, res) => { // Obtiene usuarios
 
     let desde = req.query.desde || 0;
     let limite = req.query.limite || 0;
     desde = Number(desde);
     limite = Number (limite);
-    Usuario.find({estado:true},'nombre email role estado google img')
+    Usuario.find({estado:true},'nombre email img nacionalidad ocupacion genero puntuacion telefono google facebook grupos arriendos')
         .skip(desde)
         .limit(limite)
         .exec((err,usuarios) => {
@@ -36,18 +36,20 @@ app.get('/usuario',verificaToken,(req, res) => {
                     cuantos: conteo
                 });
             })   //recibe una condición y un callback
-
         });
   });
 
-app.post('/usuario',[verificaToken,verificaAdmin_Role] ,(req, res) => {
-    let body = req.body;
-    
+app.post('/Registro',(req, res) => { // Registra un usuario local
+    let body = req.body; 
     let usuario = new Usuario({
         nombre: body.nombre,
         email: body.email,
         password: bcrypt.hashSync(body.password,10),
-        role: body.role
+        img: body.img,
+        nacionalidad: body.nacionalidad,
+        ocupacion: body.ocupacion,
+        genero: body.genero,
+        telefono: body.telefono,
     });
     usuario.save((err,usuarioDB) =>{
         if (err){
@@ -61,11 +63,11 @@ app.post('/usuario',[verificaToken,verificaAdmin_Role] ,(req, res) => {
             usuario: usuarioDB
         })
     })
-  })
+});
 
-app.put('/usuario/:id',[verificaToken,verificaAdmin_Role ], (req, res) => {
+app.put('/usuario/:id',[verificaToken,verificaAdmin_Role], (req, res) => {   // Actualiza un usuario 
     let id = req.params.id;
-    let body = _.pick(req.body,['nombre','email','img','role','estado']);
+    let body = _.pick(req.body,['nombre','email','img','nacionalidad','ocupacion','genero','telefono','grupos','arriendos']); // Hay que definir como cambiar la puntuación de un usuario
     Usuario.findByIdAndUpdate(id,body,{new:true,runValidators:true},(err,usuarioDB) => {
         if (err) {
             return res.status(400).json({
@@ -78,7 +80,7 @@ app.put('/usuario/:id',[verificaToken,verificaAdmin_Role ], (req, res) => {
             usuario: usuarioDB
           });
         })
-})
+}) // HASTA AQUI VOY 26/12/2018
   
 app.delete('/usuario/:id',[verificaToken,verificaAdmin_Role] , (req, res) => {
     
@@ -86,7 +88,6 @@ app.delete('/usuario/:id',[verificaToken,verificaAdmin_Role] , (req, res) => {
     let cambiaEstado =  {
         estado: false
     }
-    let body = _.pick(req.body,['estado']);
     Usuario.findByIdAndUpdate(id,cambiaEstado,{new:true},(err,usuarioDB) => {
         if (err){
             return res.status(400).json({

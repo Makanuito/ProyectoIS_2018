@@ -25,11 +25,25 @@ let usuarioSchema = new Schema({
     img: {
         type: String,
     },
-    role: {
+    nacionalidad: {
         type: String,
-        default: 'USER_ROLE',
-        enum: rolesValidos
-    }, 
+        default: "No registra"
+    },
+    ocupacion: {
+        type: String,
+        default: "No registra"
+    },
+    genero: {
+        type: String,
+        default: "No registra"
+    },
+    puntuacion:{
+        type: Number
+    },
+    telefono:{
+        type: String,
+        default: "No registra"
+    },
     estado: {
         type: Boolean, 
         default: true
@@ -37,7 +51,17 @@ let usuarioSchema = new Schema({
     google: {
         type: Boolean,
         default: false
-    } //boolean
+    }, //boolean
+    facebook: {
+        type: Boolean,
+        default: false
+    },
+    grupos: {
+        type: Array
+    },
+    arriendos: {
+        type: Array
+    }
 });
 usuarioSchema.methods.toJSON = function () {
     let user = this;

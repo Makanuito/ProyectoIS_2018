@@ -38,11 +38,13 @@ app.post('/login',(req,res) => {
         let token = jwt.sign({
             usuario: usuarioDB
         },process.env.SEED_LOGIN,{expiresIn:process.env.CADUCIDAD_TOKEN});
-        res.json({
-            ok: true,
-            usuario: usuarioDB,
-            token
-        });
+        // res.json({
+        //     ok: true,
+        //     usuario: usuarioDB,
+        //     token
+        // });
+         res.render('home',{usuario
+         });
     });
 });
 //Configuraciones de google
@@ -57,10 +59,10 @@ async function verify(token) {
     const payload = ticket.getPayload();
     return {
         nombre: payload.name,
-        email: payload.email,
-        img: payload.picture,
-        google: true
-    }
+         email: payload.email,
+         img: payload.picture,
+         google: true
+    };
     
 }
 app.post('/google', async (req,res) => {
@@ -83,7 +85,6 @@ app.post('/google', async (req,res) => {
         }
         if (usuarioDB){ // Si existe usuario en db
             if(usuarioDB.google === false){ // Si el usuario de la db no es usuario google
-                
                 Usuario.findByIdAndUpdate(usuarioDB.id,googleUser,{new:true,runValidators:true},(err,usuario) => {
                     if (err) {
                         return res.status(400).json({
@@ -112,7 +113,7 @@ app.post('/google', async (req,res) => {
             usuario.email = googleUser.email;
             usuario.img = googleUser.img;
             usuario.google = true;
-            usuario.password = ':)';
+            usuario.password = ':)'; // Cambiar esto
             usuario.save((err,usuarioDB) =>{
                 if (err){
                     return res.status(500).json({
@@ -123,16 +124,14 @@ app.post('/google', async (req,res) => {
                 let token = jwt.sign({
                     usuario: usuarioDB
                 },process.env.SEED_LOGIN,{expiresIn:process.env.CADUCIDAD_TOKEN});
-                
-                return res.json({
-                    ok: true,
-                    usuario: usuarioDB,
-                    token
+            return res.json({
+               ok: true,
+               usuario: usuarioDB,
+               token
                 });
             })
         }
     });
 });
-
 
 module.exports = app;

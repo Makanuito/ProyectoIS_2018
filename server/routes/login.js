@@ -67,8 +67,8 @@ async function verify(token) {
 }
 app.post('/google', async (req,res) => {
     
-    let token = req.body.idtoken;
-    let googleUser = await verify(token)
+     let token2 = req.body.idtoken;
+    let googleUser = await verify(token2)
         .catch(e =>{
             return res.status(403).json({
                 ok: false,
@@ -84,23 +84,9 @@ app.post('/google', async (req,res) => {
             });
         }
         if (usuarioDB){ // Si existe usuario en db
-            if(usuarioDB.google === false){ // Si el usuario de la db no es usuario google
-                Usuario.findByIdAndUpdate(usuarioDB.id,googleUser,{new:true,runValidators:true},(err,usuario) => {
-                    if (err) {
-                        return res.status(400).json({
-                            ok:false,
-                            err
-                        });
-                    }
-                    res.json({
-                        ok: true,
-                        usuario
-                    });
-                });
-                let token = jwt.sign({  // Marca a)
-                    usuario: usuarioDB
-                },process.env.SEED_LOGIN,{expiresIn:process.env.CADUCIDAD_TOKEN});
-            }  
+            let token = jwt.sign({
+                usuario: usuarioDB
+            },process.env.SEED_LOGIN,{expiresIn:process.env.CADUCIDAD_TOKEN});
             return res.json({
                 ok: true,
                 usuario: usuarioDB,
@@ -124,14 +110,67 @@ app.post('/google', async (req,res) => {
                 let token = jwt.sign({
                     usuario: usuarioDB
                 },process.env.SEED_LOGIN,{expiresIn:process.env.CADUCIDAD_TOKEN});
-            return res.json({
-               ok: true,
-               usuario: usuarioDB,
-               token
+                return res.json({
+                    ok: true,
+                    usuario: usuarioDB,
+                    token
                 });
             })
         }
     });
 });
+
+async function verifyFacebook(token){
+    console.log(req.body.fbUser);
+}
+
+app.post('/facebook', async (req,res) => {
+    let fbUser = req.body;
+    Usuario.findOne({email:fbUser.userID}, (err,usuarioDB) =>{
+        if (err){
+            return res.status(500).json({
+                ok: false,
+                err
+            });
+        }
+        if (usuarioDB){
+            let token = jwt.sign({
+                usuario: usuarioDB
+            },process.env.SEED_LOGIN,{expiresIn:process.env.CADUCIDAD_TOKEN});
+            return res.json({
+                ok: true,
+                usuario: usuarioDB,
+                token
+            });
+        }
+        else{
+            let usuario = new Usuario();
+            // usuario.idFacebook = fbUser.userID;
+            usuario.nombre = fbUser.name;
+            usuario.email = fbUser.userID;
+            usuario.facebook = true;
+            usuario.password = ':9'; //cambiar esto
+            usuario.img = fbUser.img;
+            usuario.save((err,usuarioDB) =>{
+                if (err){
+                    return res.status(500).json({
+                        ok: false,
+                        err
+                    });
+                }
+                let token = jwt.sign({
+                    usuario: usuarioDB
+                },process.env.SEED_LOGIN,{expiresIn:process.env.CADUCIDAD_TOKEN});
+                return res.json({
+                    ok: true,
+                    usuario: usuarioDB,
+                    token
+                });
+            });
+        }
+    })
+});
+
+
 
 module.exports = app;

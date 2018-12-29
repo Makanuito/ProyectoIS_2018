@@ -37,6 +37,11 @@ app.get('/arriendo',verificaToken,(req,res) => { // Falta el get de listar arrie
             }); 
         });
 });
+app.get('/busca_arriendo',verificaToken,(req,res) =>{
+    
+})
+
+
 app.post('/arriendo',verificaToken,(req,res) =>{  // Crear arriendo 
     let body = req.body;
     let usuario = req.usuario;

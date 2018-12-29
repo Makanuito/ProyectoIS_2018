@@ -1,9 +1,6 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Arrendemos Juntos</title>
     <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="assets/fonts/ionicons.min.css">
@@ -13,19 +10,104 @@
     <link rel="stylesheet" href="assets/css/Navigation-Clean.css">
     <link rel="stylesheet" href="assets/css/Registration-Form-with-Photo.css">
     <link rel="stylesheet" href="assets/css/styles.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
+    <meta name="google-signin-client_id" content="881237089729-vfkd60ovftgdunot30gcndj854n4be9s.apps.googleusercontent.com">
 </head>
-
 <body>
+    <div id="fb-root"></div>
+    <script>(function(d, s, id) {
+        var js, fjs = d.getElementsByTagName(s)[0];
+        if (d.getElementById(id)) return;
+        js = d.createElement(s); js.id = id;
+        js.src = 'https://connect.facebook.net/es_LA/sdk.js#xfbml=1&version=v3.2&appId=320975915294960&autoLogAppEvents=1';
+        fjs.parentNode.insertBefore(js, fjs);
+        }(document, 'script', 'facebook-jssdk'));
+    </script>
     <div class="login-clean">
         <form method="post">
             <h2 class="sr-only">Login Form</h2>
             <div class="illustration"><i class="icon ion-ios-navigate"></i></div>
             <div class="form-group"><input class="form-control" type="email" name="email" placeholder="Email"></div>
             <div class="form-group"><input class="form-control" type="password" name="password" placeholder="Password"></div>
+            <div class="g-signin2" data-onsuccess="onSignIn" data-accesstype="offline" data-redirecturi="http://localhost:3000/home"></div>
+            <div class="fb-login-button" data-max-rows="1" onlogin="onLoginFb" data-size="medium" data-button-type="login_with" data-show-faces="false" data-auto-logout-link="false" data-use-continue-as="false"></div>
             <div class="form-group"><button class="btn btn-primary btn-block" type="submit">Log In</button></div><a href="#" class="forgot">¿Olvidaste la contraseña?</a><a href="#" class="forgot">¡Registrate!</a></form>
     </div>
+    <script>
+        function signOut() {
+            var auth2 = gapi.auth2.getAuthInstance();
+            auth2.signOut().then(function () {
+            console.log('User signed out.');
+            });
+        }
+    </script>
     <script src="assets/js/jquery.min.js"></script>
     <script src="assets/bootstrap/js/bootstrap.min.js"></script>
+    <script>
+        function onSignIn(googleUser) {
+            var profile = googleUser.getBasicProfile();
+            var id_token = googleUser.getAuthResponse().id_token;
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', '/google');
+            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            xhr.onload = function() {
+            console.log('Signed in as: ' + xhr.responseText);
+            };
+            xhr.send('idtoken=' + id_token);
+            if(xhrfb.status = 200){
+                        document.location.href = 'home';
+            }
+        }
+        let fbUser = {
+            userID: "",
+            name: "",
+            accessToken: "",
+            img: "",
+            email: ""
+        };
+        function onLoginFb(response){
+            if (response.status === 'connected'){
+                fbUser.userID = response.authResponse.userID;
+                fbUser.accessToken = response.authResponse.accessToken;
+                FB.api('/me?fields=id,name,email,picture.type(large)',(userData) =>{
+                    fbUser.name = userData.name;
+                    fbUser.img = userData.picture.data.url;
+                    fbUser.email = userData.email;
+                    let JSONfb = JSON.stringify(fbUser);
+                    var xhrfb = new XMLHttpRequest();
+                    var url = "/facebook";
+                    xhrfb.open("POST", url, true);
+                    xhrfb.setRequestHeader("Content-Type", "application/json");
+                    xhrfb.send(JSONfb);
+                    if(xhrfb.status = 200){
+                        document.location.href = 'home';
+                    }
+                })
+            }
+        }
+        window.fbAsyncInit = function() {
+            FB.init({
+                appId      : '320975915294960',
+                cookie     : true,  
+                xfbml      : true,  
+                version    : 'v2.8' 
+            });
+
+  };
+
+  // Load the SDK asynchronously
+  (function(d, s, id) {
+    var js, fjs = d.getElementsByTagName(s)[0];
+    if (d.getElementById(id)) return;
+    js = d.createElement(s); js.id = id;
+    js.src = "https://connect.facebook.net/en_US/sdk.js";
+    fjs.parentNode.insertBefore(js, fjs);
+  }(document, 'script', 'facebook-jssdk'));
+
+    </script>
 </body>
 
 </html>

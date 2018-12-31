@@ -17,7 +17,7 @@ console.log(__dirname);
 app.set('views',__dirname + '../views');
 hbs.registerPartials(__dirname + '/parciales');
 app.set('view engine', 'hbs');
-app.use(require('./routes/hbs'));
+//app.use(require('./routes/hbs'));
 // Configuración global de rutas
 app.use(require('./routes/index'));
 //habilitar el public

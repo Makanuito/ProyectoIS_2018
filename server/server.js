@@ -24,21 +24,21 @@ app.use(require('./routes/index'));
 public = path.resolve(__dirname, './public');
 app.use(express.static(public));
 
-app.get('./', (req, res) => {
+app.get('/', (req, res) => {
   res.render('index',{
     nombre: 'Juan'
   })
 });
-app.get('./registro',(req,res) => {
+app.get('/registro',(req,res) => {
   res.render('registro',{pais
   });
 });
-app.get('./home', (req, res) => {
+app.get('/home', (req, res) => {
   res.render('home',{
     nombre: 'Juan'
   })
 });
-app.get('./login',(req,res) => {
+app.get('/login',(req,res) => {
   res.render('login',{
   });
 });

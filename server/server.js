@@ -17,31 +17,13 @@ app.use(bodyParser.json());
 app.set('views', path.join(__dirname, './views'));
 hbs.registerPartials(__dirname + './parciales');
 app.set('view engine', 'hbs');
-app.use(require('./routes/hbs'));
+app.use(require('../rutitas'));
 // Configuración global de rutas
 app.use(require('./routes/index'));
 //habilitar el public
 public = path.resolve(__dirname, './public');
 app.use(express.static(public));
 
-app.get('/', (req, res) => {
-  res.render('index',{
-    nombre: 'Juan'
-  })
-});
-app.get('/registro',(req,res) => {
-  res.render('registro',{pais
-  });
-});
-app.get('/home', (req, res) => {
-  res.render('home',{
-    nombre: 'Juan'
-  })
-});
-app.get('/login',(req,res) => {
-  res.render('login',{
-  });
-});
 
 
 

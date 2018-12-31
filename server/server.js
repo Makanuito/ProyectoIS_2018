@@ -13,10 +13,7 @@ app.use(bodyParser.urlencoded({ extended: false }))
 // parse application/json
 app.use(bodyParser.json());
 // Configuración handlebars (HBS)
-console.log(__dirname);
-// app.set('views',__dirname + '../views2');
-// hbs.registerPartials(__dirname + '/parciales');
-// app.set('view engine', 'hbs');
+
 app.engine('hbs', hbs.express4({
   partialsDir: __dirname + '/partials'
 }));

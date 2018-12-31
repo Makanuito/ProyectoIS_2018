@@ -37,10 +37,41 @@ app.get('/arriendo',verificaToken,(req,res) => { // Falta el get de listar arrie
             }); 
         });
 });
-app.get('/busca_arriendo',verificaToken,(req,res) =>{
-    
+app.get('/arriendo:id',verificaToken,(req,res) =>{ // Obtener un arriendo por id
+    let id = req.params.id;
+    arriendo.findOne({estado:true, _id:id},(err,arriendoDB) => {
+        if (err){
+            return res.status(500).json({
+                ok: false,
+                err
+            });
+        }
+    });
+    return arriendoDB;
+});
+app.get('/arriendo/mis-arriendos/:id', verificaToken, (req,res) => {
+    idDueno = req.usuario; 
+    arriendo.find({estado: true, duenoArriendo: usuario},'nombre descripcion direccion costo img grupos')
+        .limit(limite)
+        .exec((err,arriendos) => {
+            if (err){
+                return res.status(400).json({
+                    ok: false,
+                    err
+                });
+            }
+            arriendo.count({estado: true}, (err,conteo) => {
+                if (err){
+                    return res.status(400).json({
+                        ok: false,
+                        err
+                    });
+                }
+                Arriendos = {arriendos,conteo}
+                return Arriendos;
+            }); 
+        });
 })
-
 
 app.post('/arriendo',verificaToken,(req,res) =>{  // Crear arriendo 
     let body = req.body;
@@ -102,7 +133,7 @@ app.put('/arriendo/:id',verificaToken,(req,res) =>{ // Actualiza un arriendo
         });
     });
 });
-app.delete('/arriendo/:id',verificaToken,(req,res) => {
+app.delete('/arriendo/delete/:id',verificaToken,(req,res) => {
     idArriendo = req.params.id;
     let cambiaEstado = {
         estado: false

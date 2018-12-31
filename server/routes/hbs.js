@@ -207,9 +207,7 @@ app.get('/', (req, res) => {
     });
   });
   app.get('/home', (req, res) => {
-    res.render('home',{
-      nombre: 'Juan'
-    })
+    res.status(200);
   });
   app.get('/login',(req,res) => {
     res.render('login',{

@@ -24,6 +24,12 @@ app.use(require('./routes/index'));
 public = path.resolve(__dirname, '../public');
 app.use(express.static(public));
 
+app.get('/', (req, res) => {
+  return res.status(200);
+  // res.render('index',{
+  //   nombre: 'Juan'
+  // })
+});
 
 mongoose.connect(process.env.URLDB, (err,res) =>{
 

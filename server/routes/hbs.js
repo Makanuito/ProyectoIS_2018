@@ -198,14 +198,14 @@ let pais = ["Afghanistan",
 
 app.get('/', (req, res) => {
   // res.status(200).jsonp({ message: 'ok' });
-  res.render('index');
+  res.render('Index');
 });
 app.get('/registro',(req,res) => {
-  res.render('registro',{pais
+  res.render('Registro',{pais
   });
 });
 app.get('/home', (req, res) => {
-  res.status(200);
+  res.render('Home');
 });
 app.get('/login',(req,res) => {
   res.render('login',{

@@ -195,24 +195,7 @@ let pais = ["Afghanistan",
   "Yemen",
   "Zambia",
   "Zimbabwe"]
-app.get('./', (req, res) => {
-  res.render('index',{
-    nombre: 'Juan'
-  })
-});
-app.get('./registro',(req,res) => {
-  res.render('registro',{pais
-  });
-});
-app.get('./home', (req, res) => {
-  res.render('home',{
-    nombre: 'Juan'
-  })
-});
-app.get('./login',(req,res) => {
-  res.render('login',{
-  });
-});
+
 
 
 

@@ -14,7 +14,7 @@ app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json());
 // Configuración handlebars (HBS)
 
-app.set('views', path.join(__dirname, '../views'));
+app.set('views', path.join(__dirname, '/../views'));
 hbs.registerPartials(__dirname + '/parciales');
 app.set('view engine', 'hbs');
 app.use(require('./routes/hbs'));

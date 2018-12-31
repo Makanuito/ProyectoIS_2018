@@ -197,17 +197,18 @@ let pais = ["Afghanistan",
     "Zimbabwe"]
 
 app.get('/', (req, res) => {
-  res.status(200).jsonp({ message: 'ok' });
+  // res.status(200).jsonp({ message: 'ok' });
+  res.render('index');
+});
+app.get('/registro',(req,res) => {
+  res.render('registro',{pais
   });
-  app.get('/registro',(req,res) => {
-    res.render('registro',{pais
-    });
+});
+app.get('/home', (req, res) => {
+  res.status(200);
+});
+app.get('/login',(req,res) => {
+  res.render('login',{
   });
-  app.get('/home', (req, res) => {
-    res.status(200);
-  });
-  app.get('/login',(req,res) => {
-    res.render('login',{
-    });
-  });
+});
 module.exports = app;

@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 const app = express()
 const bodyParser = require('body-parser')
 const path = require ('path');
-const hbs = require('hbs');
+const hbs = require('express-hbs');
 require('./config/config');
 
 
@@ -14,10 +14,15 @@ app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json());
 // Configuración handlebars (HBS)
 console.log(__dirname);
-app.set('views',__dirname + '../views');
-hbs.registerPartials(__dirname + '/parciales');
+// app.set('views',__dirname + '../views2');
+// hbs.registerPartials(__dirname + '/parciales');
+// app.set('view engine', 'hbs');
+app.engine('hbs', hbs.express4({
+  partialsDir: __dirname + '/partials'
+}));
 app.set('view engine', 'hbs');
-app.use(require('./routes/hbs'));
+app.set('views', __dirname + '../views');
+
 // Configuración global de rutas
 app.use(require('./routes/index'));
 //habilitar el public

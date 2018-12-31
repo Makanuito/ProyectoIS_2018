@@ -21,7 +21,6 @@ app.use(require('./routes/hbs'));
 // Configuración global de rutas
 app.use(require('./routes/index'));
 //habilitar el public
-console.log(__dirname);
 public = path.resolve(__dirname, '../public');
 app.use(express.static(public));
 

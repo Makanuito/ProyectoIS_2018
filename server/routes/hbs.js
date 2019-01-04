@@ -195,13 +195,17 @@ let pais = ["Afghanistan",
     "Yemen",
     "Zambia",
     "Zimbabwe"]
-
+  let genero = [
+      "Hombre",
+      "Mujer",
+      "Otro"
+  ]
 app.get('/', (req, res) => {
   res.render('Index');
 });
 app.get('/registro',(req,res) => {
   res.render('Registro',{pais
-  });
+  ,genero});
 });
 app.get('/home', (req, res) => {
   res.render('Home');
@@ -210,4 +214,6 @@ app.get('/login',(req,res) => {
   res.render('login',{
   });
 });
+
+
 module.exports = app;

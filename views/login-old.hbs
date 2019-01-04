@@ -27,14 +27,16 @@
         }(document, 'script', 'facebook-jssdk'));
     </script>
     <div class="login-clean">
-        <form method="post">
+        {{!-- <form method="post"> --}}
+        <form id="Loginx">
             <h2 class="sr-only">Login Form</h2>
             <div class="illustration"><i class="icon ion-ios-navigate"></i></div>
             <div class="form-group"><input class="form-control" type="email" name="email" placeholder="Email"></div>
             <div class="form-group"><input class="form-control" type="password" name="password" placeholder="Password"></div>
             <div class="g-signin2" data-onsuccess="onSignIn" data-accesstype="offline" data-redirecturi="http://localhost:3000/home"></div>
-            <div class="fb-login-button" data-max-rows="1" onlogin="onLoginFb" data-size="medium" data-button-type="login_with" data-show-faces="false" data-auto-logout-link="false" data-use-continue-as="false"></div>
-            <div class="form-group"><button class="btn btn-primary btn-block" type="submit">Log In</button></div><a href="#" class="forgot">¿Olvidaste la contraseña?</a><a href="#" class="forgot">¡Registrate!</a></form>
+            <div class="fb-login-button" data-max-rows="1" onclick="onLoginFb" data-size="medium" data-button-type="login_with" data-show-faces="false" data-auto-logout-link="false" data-use-continue-as="false"></div>
+            <div class="form-group"><button class="btn btn-primary btn-block" onclick="onSign"type="submit">Log In</button></div><a href="#" class="forgot">¿Olvidaste la contraseña?</a><a href="#" class="forgot">¡Registrate!</a>
+        </form>
     </div>
     <script>
         function signOut() {
@@ -46,6 +48,23 @@
     </script>
     <script src="assets/js/jquery.min.js"></script>
     <script src="assets/bootstrap/js/bootstrap.min.js"></script>
+
+    <script>
+        var form = document.getElementById("Loginx");
+	    form.onsubmit = function(e){
+		    e.preventDefault();
+		    var formdata = new FormData(form);
+		    var xhr =  new XMLHttpRequest();
+		    xhr.open("POST","/login",false);
+		    xhr.send(formdata);
+		    if(xhr.status==200){
+                document.location.href = "/home"
+            };
+	}
+
+    </script>
+
+
     <script>
         function onSignIn(googleUser) {
             var profile = googleUser.getBasicProfile();
@@ -57,7 +76,7 @@
             console.log('Signed in as: ' + xhr.responseText);
             };
             xhr.send('idtoken=' + id_token);
-            if(xhrfb.status = 200){
+            if(xhr.status = 200){
                         document.location.href = 'home';
             }
         }

@@ -5,7 +5,7 @@ const app = express();
 const jwt = require('jsonwebtoken');
 const {OAuth2Client} = require('google-auth-library');
 const client = new OAuth2Client(process.env.CLIENT_ID);
-
+const cookieParser = require('cookie-parser');
 
 
 app.post('/login',(req,res) => {
@@ -38,13 +38,13 @@ app.post('/login',(req,res) => {
         let token = jwt.sign({
             usuario: usuarioDB
         },process.env.SEED_LOGIN,{expiresIn:process.env.CADUCIDAD_TOKEN});
-        // res.json({
-        //     ok: true,
-        //     usuario: usuarioDB,
-        //     token
-        // });
-         res.render('home',{usuario
-         });
+        res.cookie('token',token);
+        res.json({
+            ok: true,
+            usuario: usuarioDB,
+            token,
+            redirect: '/home'
+        });
     });
 });
 //Configuraciones de google

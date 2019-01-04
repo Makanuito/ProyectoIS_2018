@@ -1,8 +1,14 @@
 const jwt = require('jsonwebtoken');
+const cookieParser = require('cookie-parser');
+const express = require('express');
+
+const app = express();
+
 
 // Verificar token
-let verificaToken = (req,res,next) => {
-    let token = req.get('token');
+let verificaToken = (req,res,next) => {    
+    // let token = req.get('token');
+    token = req.cookies.token;
     jwt.verify(token,process.env.SEED_LOGIN, (err,decoded) =>{
         if(err){
             return res.status(401).json({
@@ -13,7 +19,6 @@ let verificaToken = (req,res,next) => {
             });
         }
         req.usuario = decoded.usuario;
-        console.log(req.usuario);
         next()
     });
 };

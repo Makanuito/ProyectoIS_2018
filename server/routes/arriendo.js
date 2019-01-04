@@ -2,19 +2,20 @@ const express = require('express');
 const app = express();
 const arriendo = require('../models/arriendo');
 const Usuario = require('../models/usuario');
-
-const {verificaToken,verificaAdmin_Role} = require('../middlewares/autenticacion');
+const {verificaToken} = require('../middlewares/autenticacion');
 const bcrypt = require('bcryptjs');
 const _= require('underscore');
+const {ActualizarImagen,BorraImagen,cargarImagen} = require('./Funciones rutas');
+
+
 // Backed de buscar arriendos 
 app.get('/arriendo',verificaToken,(req,res) => { // Falta el get de listar arriendos propios
-
-    let desde = req.query.desde || 0;
     let limite = req.query.limite || 0;
-    desde = Number(desde);
     limite = Number (limite);
     arriendo.find({estado: true},'nombre descripcion direccion costo img grupos duenoArriendo')
         .limit(limite)
+        .populate('grupos','nombre img descripcion miembros')
+        .populate('duenoArriendo','nombre email puntuacion')
         .exec((err,arriendos) => {
             if (err){
                 return res.status(400).json({
@@ -49,9 +50,13 @@ app.get('/arriendo:id',verificaToken,(req,res) =>{ // Obtener un arriendo por id
     });
     return arriendoDB;
 });
-app.get('/arriendo/mis-arriendos/:id', verificaToken, (req,res) => {
-    idDueno = req.usuario; 
-    arriendo.find({estado: true, duenoArriendo: usuario},'nombre descripcion direccion costo img grupos')
+app.get('/arriendo/mis-arriendos/', verificaToken, (req,res) => { // Busca arriendos por idDueño PUEDO ACTUALILZAR Y HACER UNA QUERY A USUARIO.GRUPOS
+    usuario = req.usuario;
+    let limite = req.query.limite || 0;
+    limite = Number (limite);
+    arriendo.find({estado: true, duenoArriendo: usuario._id},'nombre descripcion direccion costo img grupos')
+        .sort('nombre')
+        .populate('arriendos')
         .limit(limite)
         .exec((err,arriendos) => {
             if (err){
@@ -67,48 +72,89 @@ app.get('/arriendo/mis-arriendos/:id', verificaToken, (req,res) => {
                         err
                     });
                 }
-                Arriendos = {arriendos,conteo}
-                return Arriendos;
+                res.json({
+                    ok: true,
+                    arriendos,
+                    conteo
+                })
             }); 
         });
 })
 
-app.post('/arriendo',verificaToken,(req,res) =>{  // Crear arriendo 
+app.post('/arriendo/',verificaToken,(req,res) =>{  // Crear arriendo 
     let body = req.body;
     let usuario = req.usuario;
-    Usuario.findOne({estado:true, email:usuario.email}, (err,usuarioDB) =>{
+    let extensionesValidas = ['png','jpg','gif','jpeg',]
+    if (!req.files){
+        return res.status(400).json({
+            ok:false,
+            err: {
+                message:"No se ha seleccionado ningún archivo"
+            }
+        })
+    }
+    let img = [];
+    let extension =[];
+    for(i=0;i<req.files.file.length;i++){
+        img[i] = req.files.file[i]
+        extension[i] = img[i].name.split('.')
+    }
+    
+    for (i=0;i<req.files.file.length;i++){
+        let indice = extension[i][1].toLowerCase();
+        if ((extensionesValidas.indexOf(indice)) < 0){
+            return res.status(400).json({
+                ok:false,
+                extension,
+                err: {
+                    message: `Uno de los archivos subidos se encuentra entre las extensiones permitidas ${extensionesValidas}`
+                }
+            })
+        }
+    }
+    nombreUser = usuario.nombre;
+    for (i=0;i<=extension.length-1;i++){
+        nombreImagen = `${nombreUser.replace(/ /g, "")}-img-${i}-${new Date().getMilliseconds()}.${extension[i][1]}`
+        img[i].mv(`./files/arriendos/${nombreImagen}`, (err) => {
+        if (err)
+            return res.status(500).json({
+                ok:false,
+                err
+            });
+        })
+    }
+    let Arriendo = new arriendo({
+        nombre: body.nombre,
+        descripcion: body.descripcion,
+        direccion: body.direccion,
+        costo: body.costo,
+        img: extension,
+        duenoArriendo: usuario._id
+    });
+    Arriendo.save((err,arriendoDB) =>{
         if (err){
             return res.status(500).json({
                 ok: false,
                 err
             });
         }
-        let dueno = {
-            id: usuarioDB._id,
-            nombre: usuarioDB.nombre,
-            puntuacion: usuarioDB.puntuacion
-        };
-    });
-    let arriendo = new arriendo({
-        nombre: body.nombre,
-        descripcion: body.descripcion,
-        direccion: body.direccion,
-        costo: body.costo,
-        img: body.img,
-        duenoArriendo: {
-            id: dueno.id,
-            nombre: dueno.nombre,
-            puntuacion: dueno.puntuacion
-        }
-    });
-    
-    arriendo.save((err,arriendoDB) =>{
-        if (err){
+        if (!arriendoDB){
             return res.status(400).json({
                 ok: false,
                 err
             });
         }
+        Usuario.findById(usuario._id,(err,usuarioDB) => {
+            usuarioDB.arriendos.push(arriendoDB._id)
+            usuarioDB.save((err,usuarioDB) => {
+                if ( err) {
+                    return res.status(400).json({
+                        ok:false,
+                        err
+                    })
+                }
+            })
+        })
         res.json({
             ok: true,
             arriendo: arriendoDB
@@ -117,6 +163,37 @@ app.post('/arriendo',verificaToken,(req,res) =>{  // Crear arriendo
 });
 
 app.put('/arriendo/:id',verificaToken,(req,res) =>{ // Actualiza un arriendo
+
+    let img = [];
+    let extension =[];
+    for(i=0;i<req.files.file.length;i++){
+        img[i] = req.files.file[i]
+        extension[i] = img[i].name.split('.')
+    }
+    for (i=0;i<req.files.file.length;i++){
+        let indice = extension[i][1].toLowerCase();
+        if ((extensionesValidas.indexOf(indice)) < 0){
+            return res.status(400).json({
+                ok:false,
+                extension,
+                err: {
+                    message: `Uno de los archivos subidos se encuentra entre las extensiones permitidas ${extensionesValidas}`
+                }
+            })
+        }
+    }
+    nombreUser = usuario.nombre;
+    for (i=0;i<=extension.length-1;i++){
+        nombreImagen = `${nombreUser.replace(/ /g, "")}-img-${i}-${new Date().getMilliseconds()}.${extension[i][1]}`
+        img[i].mv(`./files/arriendos/${nombreImagen}`, (err) => {
+        if (err)
+            return res.status(500).json({
+                ok:false,
+                err
+            });
+        })
+    }
+    // manejar el arreglo y actualizar las imagenes del usuarioDB
     let body = _.pick(req.body,['nombre','estado','descripcion','direccion','costo','img','grupos',]);
     let usuario = req.usuario;
     idArriendo = req.params.id;
@@ -132,7 +209,7 @@ app.put('/arriendo/:id',verificaToken,(req,res) =>{ // Actualiza un arriendo
             arriendo: arriendoDB
         });
     });
-});
+}); // Actualizar esto para varias imagenes...
 app.delete('/arriendo/delete/:id',verificaToken,(req,res) => {
     idArriendo = req.params.id;
     let cambiaEstado = {

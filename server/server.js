@@ -1,10 +1,14 @@
-
+const cookieParser = require('cookie-parser');
 const express = require('express');
 const mongoose = require('mongoose');
 const app = express()
 const bodyParser = require('body-parser')
 const path = require ('path');
 const hbs = require('express-hbs');
+const fileUpload = require('express-fileupload');
+
+
+
 require('./config/config');
 
 
@@ -12,6 +16,11 @@ require('./config/config');
 app.use(bodyParser.urlencoded({ extended: false }))
 // parse application/json
 app.use(bodyParser.json());
+//fileupload Use
+app.use(fileUpload());
+// Cookie-parser
+app.use(cookieParser());
+
 // Configuración handlebars (HBS)
 
 app.engine('hbs', hbs.express4({

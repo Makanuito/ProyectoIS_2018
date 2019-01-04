@@ -56,12 +56,14 @@ let usuarioSchema = new Schema({
         type: Boolean,
         default: false
     },
-    grupos: {
-        type: Array
-    },
-    arriendos: {
-        type: Array
-    }
+    grupos: [{
+        type: Schema.Types.ObjectId,
+        ref:'grupo'
+    }],
+    arriendos: [{
+        type: Schema.Types.ObjectId,
+        ref:'arriendo'
+    }]
 });
 usuarioSchema.methods.toJSON = function () {
     let user = this;

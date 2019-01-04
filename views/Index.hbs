@@ -1,12 +1,15 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
   <meta charset="utf-8">
   <title>Arrendemos Juntos</title>
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
   <meta content="" name="keywords">
   <meta content="" name="description">
+  <script src="https://apis.google.com/js/platform.js" async defer></script>
+  <meta name="google-signin-client_id" content="881237089729-vfkd60ovftgdunot30gcndj854n4be9s.apps.googleusercontent.com">
+
+
   <!-- Place your favicon.ico and apple-touch-icon.png in the template root directory -->
   <link href="favicon.ico" rel="shortcut icon">
 
@@ -22,6 +25,12 @@
 
   <!-- Main Stylesheet File -->
   <link href="/assets/css/style.css" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/Login-Form-Clean.css">
+  <link rel="stylesheet" href="assets/css/Navigation-Clean.css">
+  <link rel="stylesheet" href="assets/css/Registration-Form-with-Photo.css">
+  <link rel="stylesheet" href="assets/css/styles.css">
+
+
 
   <!-- =======================================================
     Theme Name: Imperial
@@ -38,7 +47,7 @@
   Hero Section
   ============================-->
   <section id="hero">
-    <div class="hero-container">
+    <div class="hero-container" style="position:relative">
       <div class="wow fadeIn">
         <div class="hero-logo">
           <img class="" src="assets/img/logo.png" alt="Imperial">
@@ -48,16 +57,33 @@
         <h2>Esta aplicacion web esta dirigida para quien necesite ofertar y/o demandar arriendo orientado a la ayuda a inmigrantes.</span></h2>
         <div class="actions">
           <a href="registro" class="btn-get-started">Registrate!</a>
-          <a href="login" class="btn-services">Inicia Sesion</a>
-          <a href="#about" class="btn-services">Conocenos!</a>
+          <a target="_blank" href="#login" id="Blogin"  class="btn-services">Inicia Sesion</a>
+          <a id="Conocenos"class="btn-services">Conocenos!</a>
         </div>
       </div>
+</section>
+    <section id="login" style= "display:none; left: 50%; position: absolute; top: 50%;transform: translate(-50%, -50%);width: 50%">
+    <div class="login-clean" style="left: 50%; position: absolute; top: 50%;transform: translate(-50%, -50%);height: 10%;width: 60%;border-radius:30px">
+        {{!-- <form method="post"> --}}
+        <form id="Loginx" >
+            <h2 class="sr-only">Login Form</h2>
+            <button type="button" id="cLogin" style="margin-bottom:10px;margin-top:0%"class="close" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <div class="illustration"><i class="icon ion-ios-navigate"></i></div>
+            <div class="form-group"><input class="form-control" type="email" name="email" placeholder="Email"></div>
+            <div class="form-group"><input class="form-control" type="password" name="password" placeholder="Password"></div>
+            <div class="g-signin2" style= "display: flex;justify-content: center;margin:10px;"data-onsuccess="onSignIn" data-accesstype="offline" data-redirecturi="http://localhost:3000/home"></div>
+            <div class="fb-login-button" style="display: flex;justify-content: center;margin:10px;"data-max-rows="1" onLogin="onLoginFb" data-size="medium" data-button-type="login_with" data-show-faces="false" data-auto-logout-link="false" data-use-continue-as="false"></div>
+            <div class="form-group"style="display: flex;justify-content: center;margin:10px;"><button class="btn btn-light" onclick="onSign"type="submit">Log In</button></div>
+            <a href="#" class="forgot">¿Olvidaste la contraseña?</a><a href="#" class="forgot">¡Registrate!</a>
+        </form>
+    </div>
     </div>
   </section>
 
   <!--==========================
   Header Section
   ============================-->
+<section id="aboutx" style="display:none">
   <header id="header">
     <div class="container">
 
@@ -79,8 +105,9 @@
     </div>
   </header>
   <!-- #header -->
-
   <!--==========================
+
+
   About Section
   ============================-->
   <section id="about">
@@ -233,7 +260,117 @@
       </div>
     </div>
   </section>
+</section>
 {{>footer}}
 </body>
+<script>
+  $(function(){
+        $("#Conocenos").click(function(){
+          $("#aboutx").fadeIn();
+           $("html, body").animate({ scrollTop: $("#about").offset().top }, 1500);
+        });
+        $("#Blogin").click(function(){
+            $('#aboutx').fadeOut();
+            $("html, body").animate({ scrollTop: $("#hero").offset().top }, 500);
+            $("#login").fadeIn();
+            $('#hero').css({
+              'filter': 'blur(10px)'
+            })
+            $("#footer").css({
+              'filter': 'blur(10px)'
+            })
+        });
+        $("#cLogin").click(function(){
+            $('#login').fadeOut();
+            $('#hero').css({
+              'filter': 'blur(0)'
+            })
+            $("#footer").css({
+              'filter': 'blur(0)'
+            })
+        });
+    });
+</script>
+<script>(function(d, s, id) {
+        var js, fjs = d.getElementsByTagName(s)[0];
+        if (d.getElementById(id)) return;
+        js = d.createElement(s); js.id = id;
+        js.src = 'https://connect.facebook.net/es_LA/sdk.js#xfbml=1&version=v3.2&appId=320975915294960&autoLogAppEvents=1';
+        fjs.parentNode.insertBefore(js, fjs);
+        }(document, 'script', 'facebook-jssdk'));
+    </script>
+<script>
+        var form = document.getElementById("Loginx");
+	      form.onsubmit = function(e){
+		    e.preventDefault();
+		    var formdata = new FormData(form);
+		    var xhr =  new XMLHttpRequest();
+		    xhr.open("POST","/login",false);
+		    xhr.send(formdata);
+		    if(xhr.status==200){
+                document.location.href = "/home"
+            };
+	}
+</script>
+<script>
+        function onSignIn(googleUser) {
+            var profile = googleUser.getBasicProfile();
+            var id_token = googleUser.getAuthResponse().id_token;
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', '/google');
+            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            xhr.onload = function() {
+            console.log('Signed in as: ' + xhr.responseText);
+            };
+            xhr.send('idtoken=' + id_token);
+            if(xhr.status = 200){
+                document.location.href = "/home"
+            }
+        }
+        let fbUser = {
+            userID: "",
+            name: "",
+            accessToken: "",
+            img: "",
+            email: ""
+        };
+        function onLoginFb(response){
+            if (response.status === 'connected'){
+                fbUser.userID = response.authResponse.userID;
+                fbUser.accessToken = response.authResponse.accessToken;
+                FB.api('/me?fields=id,name,email,picture.type(large)',(userData) =>{
+                    fbUser.name = userData.name;
+                    fbUser.img = userData.picture.data.url;
+                    fbUser.email = userData.email;
+                    let JSONfb = JSON.stringify(fbUser);
+                    var xhrfb = new XMLHttpRequest();
+                    var url = "/facebook";
+                    xhrfb.open("POST", url, true);
+                    xhrfb.setRequestHeader("Content-Type", "application/json");
+                    xhrfb.send(JSONfb);
+                    if(xhrfb.status = 200){
+                        document.location.href = "/home"
+                    }
+                })
+            }
+        }
+        window.fbAsyncInit = function() {
+            FB.init({
+                appId      : '320975915294960',
+                cookie     : true,  
+                xfbml      : true,  
+                version    : 'v2.8' 
+            });
 
+  };
+  // Load the SDK asynchronously
+  (function(d, s, id) {
+    var js, fjs = d.getElementsByTagName(s)[0];
+    if (d.getElementById(id)) return;
+    js = d.createElement(s); js.id = id;
+    js.src = "https://connect.facebook.net/en_US/sdk.js";
+    fjs.parentNode.insertBefore(js, fjs);
+  }(document, 'script', 'facebook-jssdk'));
+
+</script>
 </html>

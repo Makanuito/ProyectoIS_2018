@@ -23,16 +23,17 @@ let arriendoSchema = new Schema({
         type: Number,
         required: "Costo del arriendo requerido"
     },
-    img: {
+    img: [{
         type: String,
-        default: "Link de una imagen que ponga 'No imagen'"
-    },
+        default: ['No registra imagenes']
+    }],
     grupos: {
-        type: Array,
-        default: "Sin grupos asociados"
+        type: Schema.Types.ObjectId,
+        ref: 'grupo'
     },
     duenoArriendo: {
-        type: Array
+        type: Schema.Types.ObjectId,
+        ref: 'Usuario'
     }
 });
 

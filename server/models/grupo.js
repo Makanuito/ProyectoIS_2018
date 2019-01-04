@@ -7,7 +7,7 @@ let grupoSchema = new Schema({
         type: String,
         required: "El nombre del grupo es requerido"
     },
-    descripción: {
+    descripcion: {
         type: String,
         default: "No contiene descripción"
     },
@@ -15,12 +15,22 @@ let grupoSchema = new Schema({
         type: String,
         default: "Link de una imagen que ponga 'No imagen'"
     },
-    miembros: { // array de id_usuarios con atributo admin al dueño del grupo
-        required: true
+    admin:{
+        type: Schema.Types.ObjectId,
+        ref: 'Usuario'
     },
-    arriendos: { // array de id_arriendo con id_dueño de arriendo
-        type: Array
-    }
+    miembros: [{ // array de id_usuarios con atributo admin al dueño del grupo
+        type: Schema.Types.ObjectId,
+        ref: 'Usuario'
+    }],
+    arriendos: [{ // array de id_arriendo con id_dueño de arriendo
+        type: [Schema.Types.ObjectId],
+        ref: 'arriendo'
+    }],
+    estado:{
+        type: Boolean,
+        default: true
+    } 
 });
 
 grupoSchema.plugin(uniqueValidator,{

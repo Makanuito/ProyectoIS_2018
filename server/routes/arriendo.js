@@ -5,7 +5,6 @@ const Usuario = require('../models/usuario');
 const {verificaToken} = require('../middlewares/autenticacion');
 const bcrypt = require('bcryptjs');
 const _= require('underscore');
-const {ActualizarImagen,BorraImagen,cargarImagen} = require('./Funciones rutas');
 
 
 // Backed de buscar arriendos 
@@ -163,7 +162,7 @@ app.post('/arriendo/',verificaToken,(req,res) =>{  // Crear arriendo
 });
 
 app.put('/arriendo/:id',verificaToken,(req,res) =>{ // Actualiza un arriendo
-
+    usuario = req.usuario;
     let img = [];
     let extension =[];
     for(i=0;i<req.files.file.length;i++){
@@ -193,9 +192,9 @@ app.put('/arriendo/:id',verificaToken,(req,res) =>{ // Actualiza un arriendo
             });
         })
     }
-    // manejar el arreglo y actualizar las imagenes del usuarioDB
-    let body = _.pick(req.body,['nombre','estado','descripcion','direccion','costo','img','grupos',]);
-    let usuario = req.usuario;
+    // manejar el arreglo
+    let body = _.pick(req.body,['nombre','estado','descripcion','direccion','costo','grupos',]);
+    body.img = extension;
     idArriendo = req.params.id;
     arriendo.findByIdAndUpdate(idArriendo,body,{new:true,runValidators:true},(err,arriendoDB) => {
         if (err) {
@@ -209,7 +208,7 @@ app.put('/arriendo/:id',verificaToken,(req,res) =>{ // Actualiza un arriendo
             arriendo: arriendoDB
         });
     });
-}); // Actualizar esto para varias imagenes...
+});
 app.delete('/arriendo/delete/:id',verificaToken,(req,res) => {
     idArriendo = req.params.id;
     let cambiaEstado = {

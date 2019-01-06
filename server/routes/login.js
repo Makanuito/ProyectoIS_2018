@@ -42,8 +42,7 @@ app.post('/login',(req,res) => {
         res.json({
             ok: true,
             usuario: usuarioDB,
-            token,
-            redirect: '/home'
+            token
         });
     });
 });
@@ -119,10 +118,6 @@ app.post('/google', async (req,res) => {
         }
     });
 });
-
-async function verifyFacebook(token){
-    console.log(req.body.fbUser);
-}
 
 app.post('/facebook', async (req,res) => {
     let fbUser = req.body;

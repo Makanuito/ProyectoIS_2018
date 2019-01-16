@@ -66,7 +66,7 @@ async function verify(token) {
 }
 app.post('/google', async (req,res) => {
     
-     let token2 = req.body.idtoken;
+    let token2 = req.body.idtoken;
     let googleUser = await verify(token2)
         .catch(e =>{
             return res.status(403).json({
@@ -74,7 +74,6 @@ app.post('/google', async (req,res) => {
                 err: e
             })
         });
-    
     Usuario.findOne({email:googleUser.email}, (err,usuarioDB) =>{
         if (err){
             return res.status(500).json({
@@ -165,6 +164,16 @@ app.post('/facebook', async (req,res) => {
         }
     })
 });
+app.get('/logout',(req,res)=> {
+    token = req.cookies.token;
+    if ((token.facebook == false) && (token.google == false)){
+        res.clearCookie(token);
+    } else if(token.facebook==true){
+
+    } else if(token.google==true){
+
+    }
+})
 
 
 

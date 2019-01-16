@@ -35,6 +35,10 @@ app.use(require('./routes/index'));
 public = path.resolve(__dirname, '../public');
 app.use(express.static(public));
 
+app.use(function(req, res) {
+  res.render(path.resolve(__dirname,'../views/404-error'));
+});
+
 mongoose.connect(process.env.URLDB, (err,res) =>{
 
   if (err) throw err;

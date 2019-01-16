@@ -235,4 +235,7 @@ app.delete('/arriendo/delete/:id',verificaToken,(req,res) => {
         });
     });
 })
+
+
+
 module.exports = app;

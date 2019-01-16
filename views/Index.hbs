@@ -55,7 +55,7 @@
         <h1>Arrendemos Juntos</h1>
         <h2>Esta aplicacion web esta dirigida para quien necesite ofertar y/o demandar arriendo orientado a la ayuda a inmigrantes.</span></h2>
         <div class="actions">
-          <a href="registro" class="btn-get-started">Registrate!</a>
+          <a href="#registerx" id="Bregister" class="btn-get-started">Registrate!</a>
           <a target="_blank" href="#login" id="Blogin"  class="btn-services">Inicia Sesion</a>
           <a id="Conocenos"class="btn-services">Conocenos!</a>
         </div>
@@ -66,18 +66,51 @@
         {{!-- <form method="post"> --}}
         <form id="Loginx" >
             <h2 class="sr-only">Login Form</h2>
-            <button type="button" id="cLogin" style="margin-bottom:10px;margin-top:0%"class="close" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <button type="button" id="salir" style="margin-bottom:10px;margin-top:0%"class="close" aria-label="Close"><span aria-hidden="true">&times;</span></button>
             <div class="illustration"><i class="icon ion-ios-navigate"></i></div>
             <div class="form-group"><input class="form-control" type="email" name="email" placeholder="Email"></div>
             <div class="form-group"><input class="form-control" type="password" name="password" placeholder="Password"></div>
             <div class="g-signin2" style= "display: flex;justify-content: center;margin:10px;"data-onsuccess="onSignIn" data-accesstype="offline" data-redirecturi="http://localhost:3000/home"></div>
             <div class="fb-login-button" style="display: flex;justify-content: center;margin:10px;"data-max-rows="1" onLogin="onLoginFb" data-size="medium" data-button-type="login_with" data-show-faces="false" data-auto-logout-link="false" data-use-continue-as="false"></div>
             <div class="form-group"style="display: flex;justify-content: center;margin:10px;"><button class="btn btn-light" onclick="onSign"type="submit">Log In</button></div>
-            <a href="#" class="forgot">¿Olvidaste la contraseña?</a><a href="#" class="forgot">¡Registrate!</a>
+            <a href="#" class="forgot">¿Olvidaste la contraseña?</a>
         </form>
     </div>
     </div>
   </section>
+<section id='registerx' style="display:none; left: 50%; position: absolute; top: 50%;transform: translate(-50%, -50%);width: 50%">
+  <div class="login-clean">
+            <form id="Fregister">
+                <button type="button" id="cerrar" style="margin-bottom:10px;margin-top:0%"class="close" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <div class="form-group" >Email<input class="form-control" type="email" name="email"  placeholder="ArriendosChupapi@email.com" style="color:rgb(0,0,0)"></div>
+                <div class="form-group">Nombre<input class="form-control" type="text" name="nombre"  placeholder="Pancracio Gumercindo" style="color:rgb(0,0,0)"></div>
+                <div class="form-group">Subir Imagen<input class="float-right" type="file"  name="img"></div>
+                <div class="form-group">Genero
+                <select class="form-control" name="genero">
+                    {{# each genero}}
+                    <option>{{this}}</option>
+                    {{/each}}
+                </select>
+                </div>
+                <div class="form-group">País
+                <select class="form-control" name="nacionalidad">
+                    {{# each pais}}
+                    <option>{{this}}</option>
+                    {{/each}}
+                </select>
+                </div>
+                <div class="form-group">Telefono<input class="form-control" type="text" name="telefono" placeholder="+56955380300" style="color:rgb(0,0,0)"></div>
+                <div class="form-group">Ocupación<input class="form-control" type="text" name="ocupacion" placeholder="Actor porno" style="color:rgb(0,0,0)" ></div>
+                <div class="form-group">Contraseña<input class="form-control" type="password" name="password" placeholder="******" style="color:rgb(0,0,0)"></div>
+                <div class="form-group">Contraseña(repeat)<input class="form-control" type="password" name="password-repeat" placeholder="******" style="color:rgb(0,0,0)"  ></div>
+                <div class="form-group">
+                    <div class="form-check"><label class="form-check-label"><input class="form-check-input" type="checkbox">Acepto los terminos y condiciones de Arrendemos Juntos</label></div>
+                </div>
+                <div class="form-group"><button class="btn btn-primary btn-block" type="submit">Enviar</button></div>
+            </form>
+        </div>
+    </div>
+</section>
 
   <!--==========================
   Header Section
@@ -266,28 +299,49 @@
   $(function(){
         $("#Conocenos").click(function(){
           $("#aboutx").fadeIn();
-           $("html, body").animate({ scrollTop: $("#about").offset().top }, 1500);
+          $("html, body").animate({ scrollTop: $("#about").offset().top }, 600);
         });
         $("#Blogin").click(function(){
-            $('#aboutx').fadeOut();
-            $("html, body").animate({ scrollTop: $("#hero").offset().top }, 500);
             $("#login").fadeIn();
+            $("html, body").animate({ scrollTop: $("#login").offset().top }, 600);
             $('#hero').css({
               'filter': 'blur(10px)'
             })
             $("#footer").css({
               'filter': 'blur(10px)'
             })
+            $('#aboutx').fadeOut();
         });
-        $("#cLogin").click(function(){
+        $("#salir").click(function(){
             $('#login').fadeOut();
+            $('#registerx').fadeOut();
             $('#hero').css({
               'filter': 'blur(0)'
             })
             $("#footer").css({
               'filter': 'blur(0)'
             })
-        });
+        })
+        $('#cerrar').click(function (){
+            $('#registerx').fadeOut();
+            $('#hero').css({
+              'filter': 'blur(0)'
+            })
+            $("#footer").css({
+              'filter': 'blur(0)'
+            })
+        })
+        $('#Bregister').click(function(){
+            $('#aboutx').fadeOut();
+            $('#registerx').fadeIn();
+            $('#hero').css({
+              'filter': 'blur(10px)'
+            })
+            $("#footer").css({
+              'filter': 'blur(10px)'
+            })  
+            $("html, body").animate({ scrollTop: $("#register").offset().top }, 600);
+        })
     });
 </script>
 <script>(function(d, s, id) {
@@ -310,6 +364,24 @@
                 document.location.href = "/home"
         };
 	}
+</script>
+<script>
+   var form = document.getElementById("Fregister");
+	 form.onsubmit = function(e){
+	 e.preventDefault();
+	 var formdata = new FormData(form);
+	 var xhr =  new XMLHttpRequest();
+	 xhr.open("POST","/Registro",false);
+	 xhr.send(formdata);
+   let res=JSON.parse(xhr.response)
+	 if(xhr.status==200){
+    alert('Registrado con éxito')
+   } else {
+    console.log(res)
+    alert(`ERROR: ${res.err.message}`);
+  }
+}
+
 </script>
 <script>
         function onSignIn(googleUser) {

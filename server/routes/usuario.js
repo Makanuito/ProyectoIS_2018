@@ -45,7 +45,7 @@ app.get('/usuario',verificaToken,(req, res) => { // Obtiene usuarios
   });
 app.post('/Registro',(req, res) => { // Registra un usuario local y actualiza un usuario
     let body = req.body;
-    if (!req.files){
+    if (!req.files.img){
         return res.status(400).json({
             ok:false,
             err: {
@@ -270,6 +270,4 @@ function BorraImagen(tipo,nombreImagen){
             fs.unlinkSync(pathImagen)
         }
 }
-
-
 module.exports = app;
